@@ -1,4 +1,5 @@
 // Nuxt 3 configuration for Jie Blog
+const baseURL = process.env.NUXT_APP_BASE_URL || process.env.BASE_URL || '/'
 export default defineNuxtConfig({
   modules: [
     '@nuxt/content',
@@ -8,6 +9,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/**': { prerender: true }
   },
+  compatibilityDate: '2025-08-30',
   content: {
     highlight: {
       theme: {
@@ -17,6 +19,7 @@ export default defineNuxtConfig({
     }
   },
   app: {
+    baseURL,
     head: {
       htmlAttrs: { lang: 'zh-CN' },
       titleTemplate: (titleChunk?: string) => {
