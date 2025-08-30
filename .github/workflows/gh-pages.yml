@@ -32,9 +32,18 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Set baseURL for project pages
-        if: ${{ !endsWith(github.event.repository.name, '.github.io') }}
-        run: echo "NUXT_APP_BASE_URL=/${{ github.event.repository.name }}/" >> $GITHUB_ENV
+      - name: Detect CNAME and set baseURL
+        run: |
+          if [ -f public/CNAME ]; then
+            echo "Detected CNAME, set baseURL=/"
+            echo "NUXT_APP_BASE_URL=/" >> $GITHUB_ENV
+          elif [[ "${{ github.event.repository.name }}" != *".github.io" ]]; then
+            echo "Project pages repo without CNAME, set baseURL=/${{ github.event.repository.name }}/"
+            echo "NUXT_APP_BASE_URL=/${{ github.event.repository.name }}/" >> $GITHUB_ENV
+          else
+            echo "User/Org pages repo, baseURL=/"
+            echo "NUXT_APP_BASE_URL=/" >> $GITHUB_ENV
+          fi
 
       - name: Generate static site
         run: npm run generate
