@@ -14,7 +14,7 @@
     <p class="text-gray-500 mt-10">文章</p>
     <ul class="mt-2 divide-y divide-gray-200 dark:divide-gray-800">
       <li v-for="post in posts" :key="post._path" class="py-3 grid grid-cols-[1fr_auto] gap-4 items-baseline">
-        <NuxtLink :to="post._path" class="font-semibold text-lg hover:underline">{{ post.title }}</NuxtLink>
+        <NuxtLink :to="postLink(post._path)" class="font-semibold text-lg hover:underline">{{ post.title }}</NuxtLink>
         <time class="text-sm text-gray-500 whitespace-nowrap">{{ formatDate(post.date) }}</time>
       </li>
     </ul>
@@ -24,6 +24,14 @@
 <script setup lang="ts">
 const { data } = await useAsyncData('posts', () => queryContent('/posts').where({ draft: { $ne: true } }).sort({ date: -1 }).find())
 const posts = computed(() => data.value || [])
+const base = useRuntimeConfig().app.baseURL || '/'
+
+function postLink(path?: string) {
+  if (!path) return '/'
+  const p = path.startsWith('/') ? path.slice(1) : path
+  const b = base.endsWith('/') ? base : base + '/'
+  return `${b}${p}`
+}
 function formatDate(d?: string) {
   if (!d) return ''
   const dt = new Date(d)
