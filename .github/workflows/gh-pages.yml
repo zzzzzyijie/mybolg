@@ -26,11 +26,14 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
       - name: Install deps
         run: npm ci
 
       - name: Set baseURL for project pages
-        if: ${{ github.event.repository.name != github.event.repository.owner.login }}
+        if: ${{ !endsWith(github.event.repository.name, '.github.io') }}
         run: echo "NUXT_APP_BASE_URL=/${{ github.event.repository.name }}/" >> $GITHUB_ENV
 
       - name: Generate static site
